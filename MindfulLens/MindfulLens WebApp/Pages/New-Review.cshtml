@@ -1,0 +1,82 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.New_ReviewModel
+@{
+    ViewData["Title"] = "New review";
+    Layout = "~/Pages/Shared/_EmptyLayout.cshtml";
+}
+
+<a class="back-button" href="/Reviews-And-Feedback">← Back</a>
+
+<div class="tab-label">Review</div>
+
+<form method="post">
+    <div class="login-container" style="width: 50%; row-gap: 15px;">
+        <div class="regular-label" style="text-align: left;">Enter rating</div>
+        <div class="review-rating">
+            <div class="numeric-buttons-div">
+                <div class="numeric-button" onclick="IncreaseRating()">▲</div>
+                <div class="numeric-button" onclick="DecreaseRating()">▼</div>
+            </div>
+            <input asp-for="reviewModel.Ranking" type="text" class="rating-input" maxlength="2" value="1" id="numberInput" onkeypress="return (event.forEach != 8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))" />
+            <div class="regular-label" style="text-align: left; vertical-align: top; margin-top: auto; margin-bottom: auto; font-size: 30px;">/10</div>
+        </div>
+        <div class="login-error-label">
+            <span asp-validation-for="reviewModel.Ranking"></span>
+        </div>
+    
+        <div class="regular-label" style="text-align: left">Enter review</div>
+        <textarea asp-for="reviewModel.Text" class="review-input" placeholder="Enter review"></textarea>
+        <div class="login-error-label">
+            <span asp-validation-for="reviewModel.Text"></span>
+        </div>
+
+        <div class="login-error-label">@Model.errorMessage</div>
+    </div>
+
+    <div class="add-new blue-button">
+        <input type="submit" asp-page-handler="NewReview" value="Publish" />
+    </div>
+</form>
+
+<script>
+    const numberInput = document.getElementById('numberInput');
+
+    // Add input event listener to validate the input
+    numberInput.addEventListener('input', () => {
+        let value = numberInput.value.trim(); // Trim whitespace
+
+        // Remove leading zeros
+        while (value.length > 1 && value[0] === '0') {
+            value = value.slice(1);
+        }
+
+        // Convert value to number
+        const number = parseInt(value, 10);
+
+        // Check if the number is within the range 1 to 10
+        if (isNaN(number) || number < 1 || number > 10) {
+            if (number === 0) {
+                numberInput.value = "";
+            }
+            else {
+                numberInput.value = numberInput.value.slice(0, 1); // Clear the input if invalid
+            }
+        } else {
+            numberInput.value = number; // Update the input value
+        }
+    });
+
+    function IncreaseRating() {
+        if (numberInput.value < 10) {
+            numberInput.value = parseInt(numberInput.value, 10) + 1;
+        }
+    }
+
+    function DecreaseRating() {
+        if (numberInput.value > 1) {
+            numberInput.value = numberInput.value - 1;
+        }
+    }
+</script>
+
+<partial name="_ValidationScriptsPartial" />

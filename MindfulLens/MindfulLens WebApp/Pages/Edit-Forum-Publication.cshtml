@@ -1,0 +1,68 @@
+﻿@page
+@using Logic_Layer
+@model MindfulLens_WebApp.Pages.Edit_Forum_PublicationModel
+@{
+    ViewData["Title"] = "Edit forum publication";
+    Layout = "~/Pages/Shared/_NoSidebarLayout.cshtml";
+}
+
+@if (Model.forumPublication == null)
+{
+    <div class="tab-label">Sorry, we couldn't find this forum publication</div>
+}
+else if (!Model.allowEdit)
+{
+    <div class="tab-label">You are not allowed to edit this forum publication</div>
+}
+else if (Model.forumPublication.IsDeleted)
+{
+    <div class="tab-label">Sorry, this publication was deleted</div>
+}
+else
+{
+    <div class="tab-label">Edit forum publication</div>
+
+    <div class="login-container" style="width: 50%; row-gap: 15px;">
+        @if (Model.forumPublication.QuestionPublication != null)
+        {
+            <div class="mentioned-forum-publication">
+                <div class="author-div">
+                    @if (!Model.forumPublication.QuestionPublication.Creator.Banned)
+                    {
+                        <div class="author-photo">
+                            @if (Model.forumPublication.QuestionPublication.Creator.Photo != null)
+                            {
+                                string imageBase64 = Convert.ToBase64String(Model.forumPublication.QuestionPublication.Creator.Photo);
+                                string imageSrc = $"data:image/png;base64,{imageBase64}";
+                                <img src="@imageSrc" draggable="false" style="pointer-events: none; user-select: none; width: 100%;" />
+                            }
+                        </div>
+                        <div class="author-name">@Model.forumPublication.QuestionPublication.Creator.Name</div>
+                    }
+                    else
+                    {
+                        <div class="author-photo"></div>
+                        <div class="author-name">@CommonData.userBanned</div>
+                    }
+                </div>
+                <div class="publication-text">@Model.forumPublication.QuestionPublication.Text</div>
+            </div>
+        }
+
+        <form method="post">
+            <div class="publications-container">
+                <div class="regular-label" style="text-align: left; font-size: 25px;">Text</div>
+                <textarea asp-for="forumModel.Text" class="review-input" placeholder="Enter text of publication">Aboba</textarea>
+                <div class="login-error-label">
+                    <span asp-validation-for="forumModel.Text"></span>
+                </div>
+                <div class="login-error-label">@Model.errorMessage</div>
+                <div class="blue-button">
+                    <input type="submit" value="Update" asp-page-handler="EditPublication" />
+                </div>
+            </div>
+
+            <input class="hidden-input" type="text" value="@Model.forumPublication.ID" name="publication-id" readonly />
+        </form>
+    </div>
+}

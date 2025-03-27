@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <RootNamespace>MindfulLens_DesktopApp</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Data Infrastructure\Data Infrastructure.csproj" />
+    <ProjectReference Include="..\Logic Layer\Logic Layer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Visitor\User controls\CustomBiasesUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Visitor\User controls\CustomSourcesUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Visitor\User controls\CustomTheoriesUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Visitor\User controls\CustomExercisesUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Visitor\User controls\VisitorIntroductionUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Visitor\User controls\PersonalPathUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Visitor\VisitorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

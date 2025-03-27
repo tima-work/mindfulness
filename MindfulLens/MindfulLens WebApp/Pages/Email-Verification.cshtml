@@ -1,0 +1,49 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.Email_VerificationModel
+@{
+    Layout = "~/Pages/Shared/_NoSidebarLayout.cshtml";
+    ViewData["Title"] = "Email verification";
+}
+
+<div class="verification-code-container">
+    <div class="regular-label" style="text-align: center;">We sent you verification code on your email. Please, enter it below</div>
+    <div class="verification-cell-grid">
+        <input type="text" class="verification-code-cell" maxlength="1" tabindex="1" onkeypress="return (event.forEach != 8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))"/>
+        <input type="text" class="verification-code-cell" maxlength="1" tabindex="2" onkeypress="return (event.forEach != 8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))" />
+        <input type="text" class="verification-code-cell" maxlength="1" tabindex="3" onkeypress="return (event.forEach != 8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))" />
+        <input type="text" class="verification-code-cell" maxlength="1" tabindex="4" onkeypress="return (event.forEach != 8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))" />
+        <input type="text" class="verification-code-cell" maxlength="1" tabindex="5" onkeypress="return (event.forEach != 8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))" />
+        <input type="text" class="verification-code-cell" maxlength="1" tabindex="6" onkeypress="return (event.forEach != 8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))" />
+    </div>
+    <div class="login-error-label" style="text-align: center;">Aboba</div>
+    <form method="post">
+        <div class="blue-button">
+            <input type="submit" asp-page-handler="Login" class="blue-button-submit" value="Confirm email" />
+        </div>
+    </form>
+</div>
+
+<script>
+    // Get all verification textboxes
+    const verificationInputs = document.querySelectorAll('.verification-code-cell');
+
+    // Add input event listeners to each textbox
+    verificationInputs.forEach((textbox, index) => {
+        textbox.addEventListener('input', (event) => {
+            // If a character is entered and the current textbox is not the last one
+            if (textbox.value.length === 1 && index < verificationInputs.length - 1) {
+                // Focus on the next textbox
+                verificationInputs[index + 1].focus();
+            }
+        });
+
+        textbox.addEventListener('keydown', (event) => {
+            // If Backspace is pressed and the current textbox is empty, move focus to the previous textbox
+            if (event.keyCode === 8 && index > 0) {
+                verificationInputs[index].value = "";
+                event.preventDefault(); // Prevent default Backspace behavior
+                verificationInputs[index - 1].focus();
+            }
+        });
+    });
+</script>

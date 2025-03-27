@@ -1,0 +1,317 @@
+﻿@page
+@using Logic_Layer.Classes
+@model MindfulLens_WebApp.Pages.Admin.Inappropriate_ContentModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Inappropriate content";
+}
+
+
+<div class="tab-label">Inappropriate content</div>
+<div class="empty-page-div" style="top: 25%; transform: translate(-50%, -25%);">
+    <div class="empty-page-text">This page is dedicated to content that our algoritm consider to be inappropriate</div>
+</div>
+<div class="content-controls-container" style="top: 35%; transform: translate(-50%, -35%);">
+    <div class="two-divs-div">
+        <input id="query-textbox" type="text" class="custom-input" placeholder="Search" style="margin: auto; width: 210px; height: 40px; font-size: 20px;" value="@Model.search_query" />
+        <div class="search-button" onclick="querySearch()"><img src="~/Group 2.png" width="100%" draggable="false" style="pointer-events: none; user-select: none;"></div>
+    </div>
+    <div class="blue-button" style="font-size: 20px;" onclick="showAll()">Show all</div>
+    <div class="two-divs-div">
+        <div class="profile-credentials" style="margin: auto;">Sort by: </div>
+        <select name="Sortings" id="Sortings" class="custom-combobox sort-combobox" onchange="myChooseOption(this)">
+            @if (Model.sort_method == null || Model.sort_method != "CreationDate" || (Model.sort_order != "ASC" && Model.sort_order != "DESC"))
+            {
+                <option value="Choose option" disabled selected>Choose option</option>
+            }
+            else
+            {
+                <option value="Choose option" disabled>Choose option</option>
+            }
+            @if (Model.sort_method == "CreationDate" && Model.sort_order == "ASC")
+            {
+                <option value="time&order=asc" selected>Time ascending</option>
+            }
+            else
+            {
+                <option value="time&order=asc">Time ascending</option>
+            }
+            @if (Model.sort_method == "CreationDate" && Model.sort_order == "DESC")
+            {
+                <option value="time&order=desc" selected>Time descending</option>
+            }
+            else
+            {
+                <option value="time&order=desc">Time descending</option>
+            }
+        </select>
+    </div>
+</div>
+<div class="publications-flex" style="top: 85%; transform: translate(-50%, -85%);" id="scrollable-div">
+    <div class="publications-container">
+
+        @if (Model.reports.Length > 0)
+        {
+            for (int i = 0; i < Model.reports.Length - 1; i++)
+            {
+                <div class="reported-content-div">
+                    <div class="report-text">Reason: @Model.reports[i].Reason<br />Description: @Model.reports[i].Text</div>
+
+                    @switch (Model.reports[i].ReportedPublication.GetType().Name)
+                    {
+                        case "Review":
+                            <div class="reported-publication">
+                                <div class="author-div">
+                                    <div class="author-photo"></div>
+                                    <div class="author-name">@Model.reports[i].ReportedPublication.Creator.Name</div>
+                                </div>
+                                <div class="publication-text" style="font-style: italic;">@Model.reports[i].ReportedPublication.Text</div>
+                                <div class="read-more">Type: Review</div>
+                            </div>
+                            break;
+                        case "ForumPublication":
+                            <div class="reported-publication">
+                                <div class="author-div">
+                                    <div class="author-photo"></div>
+                                    <div class="author-name">@Model.reports[i].ReportedPublication.Creator.Name</div>
+                                </div>
+                                <div class="publication-text" style="font-style: italic;">@Model.reports[i].ReportedPublication.Text</div>
+                                <div class="read-more">Type: Forum publication</div>
+                            </div>
+                            break;
+                        case "Exercise":
+                            <a class="content-div exercise-div" href="/Exercise-Page?exercise_id=@Model.reports[i].ReportedPublication.ID">@((Model.reports[i].ReportedPublication as Exercise).Title)</a>
+                            break;
+                        case "Source":
+                            <a class="content-div source-div" href="/Source-Page?source_id=@Model.reports[i].ReportedPublication.ID">@((Model.reports[i].ReportedPublication as Source).Title)</a>
+                            break;
+                        case "CognitivePart":
+                            if ((Model.reports[i].ReportedPublication as CognitivePart).ClassName == "Bias")
+                            {
+                                <a class="content-div bias-div" href="/Bias-Page?bias_id=@Model.reports[i].ReportedPublication.ID">@((Model.reports[i].ReportedPublication as CognitivePart).Title)</a>
+                            }
+                            else if ((Model.reports[i].ReportedPublication as CognitivePart).ClassName == "Theory")
+                            {
+                                <a class="content-div theory-div" href="/Theory-Method-Page?theory_id=@Model.reports[i].ReportedPublication.ID">@((Model.reports[i].ReportedPublication as CognitivePart).Title)</a>
+                            }
+                            break;
+                    }
+
+                </div>
+
+                <div class="two-divs-div" style="column-gap: 20%;">
+                    <div class="blue-button" style="margin-left: auto; margin-right: 0;" id="@Model.reports[i].ID" onclick="acceptReport(this);">Accept</div>
+                    <div class="blue-button" style="margin-right: auto; margin-left: 0;" id="@Model.reports[i].ID" onclick="declineReport(this);">Decline</div>
+                </div>
+                <div class="white-line"></div>
+            }
+
+            <div class="reported-content-div">
+                <div class="report-text">Reason: @Model.reports[Model.reports.Length - 1].Reason<br />Description: @Model.reports[Model.reports.Length - 1].Text</div>
+
+                @switch (Model.reports[Model.reports.Length - 1].ReportedPublication.GetType().Name)
+                {
+                    case "Review":
+                        <div class="reported-publication">
+                            <div class="author-div">
+                                <div class="author-photo"></div>
+                                <div class="author-name">@Model.reports[Model.reports.Length - 1].ReportedPublication.Creator.Name</div>
+                            </div>
+                            <div class="publication-text" style="font-style: italic;">@Model.reports[Model.reports.Length - 1].ReportedPublication.Text</div>
+                            <div class="read-more">Type: Review</div>
+                        </div>
+                        break;
+                    case "ForumPublication":
+                        <div class="reported-publication">
+                            <div class="author-div">
+                                <div class="author-photo"></div>
+                                <div class="author-name">@Model.reports[Model.reports.Length - 1].ReportedPublication.Creator.Name</div>
+                            </div>
+                            <div class="publication-text" style="font-style: italic;">@Model.reports[Model.reports.Length - 1].ReportedPublication.Text</div>
+                            <div class="read-more">Type: Forum publication</div>
+                        </div>
+                        break;
+                    case "Exercise":
+                        <a class="content-div exercise-div" href="/Exercise-Page?exercise_id=@Model.reports[Model.reports.Length - 1].ReportedPublication.ID">@((Model.reports[Model.reports.Length - 1].ReportedPublication as Exercise).Title)</a>
+                        break;
+                    case "Source":
+                        <a class="content-div source-div" href="/Source-Page?source_id=@Model.reports[Model.reports.Length - 1].ReportedPublication.ID">@((Model.reports[Model.reports.Length - 1].ReportedPublication as Source).Title)</a>
+                        break;
+                    case "CognitivePart":
+                        if ((Model.reports[Model.reports.Length - 1].ReportedPublication as CognitivePart).ClassName == "Bias")
+                        {
+                            <a class="content-div bias-div" href="/Bias-Page?bias_id=@Model.reports[Model.reports.Length - 1].ReportedPublication.ID">@((Model.reports[Model.reports.Length - 1].ReportedPublication as CognitivePart).Title)</a>
+                        }
+                        else if ((Model.reports[Model.reports.Length - 1].ReportedPublication as CognitivePart).ClassName == "Theory")
+                        {
+                            <a class="content-div theory-div" href="/Theory-Method-Page?theory_id=@Model.reports[Model.reports.Length - 1].ReportedPublication.ID">@((Model.reports[Model.reports.Length - 1].ReportedPublication as CognitivePart).Title)</a>
+                        }
+                        break;
+                }
+
+            </div>
+
+            <div class="two-divs-div" style="column-gap: 20%;">
+                <div class="blue-button" style="margin-left: auto; margin-right: 0;" id="@Model.reports[Model.reports.Length - 1].ID" onclick="acceptReport(this);">Accept</div>
+                <div class="blue-button" style="margin-right: auto; margin-left: 0;" id="@Model.reports[Model.reports.Length - 1].ID" onclick="declineReport(this);">Decline</div>
+            </div>
+        }
+
+        <div style="height: 100px;"></div>
+
+        @if (Model.showMoreButton)
+        {
+            <div class="blue-button" onclick="showMore()">Load more</div>
+            <div style="height: 100px;"></div>
+        }
+    </div>
+</div>
+
+<input type="text" id="Load-number" class="hidden-input" value="@Model.load_number" readonly />
+<input type="text" id="Load-step" class="hidden-input" value="@Inappropriate_ContentModel.load_step" readonly />
+
+<script>
+    function acceptReport(e) {
+        var t = "/Admin/Potentially-Inappropriate-Content?";
+
+        @if (Model.search_query != null)
+        {
+            @: var q = document.getElementById("query-textbox");
+            @:t = t + "search=" + q.value + "&";
+        }
+
+        @if (Model.sort_method != null)
+        {
+            @: var s = document.getElementById("Sortings");
+            @:t = t + "sort=" + s.value + "&";
+        }
+
+        @if (Model.load_number > Reported_ContentModel.load_step) 
+        {
+            @: var b = document.getElementById("Load-number").value - document.getElementById("Load-step").value;
+            @: t = t + "number=" + b + "&";
+        }
+
+        window.location.href = t + "report_id=" + e.id + "&report_action=Accept";
+    }
+
+    function declineReport(e) {
+        var t = "/Admin/Potentially-Inappropriate-Content?";
+
+        @if (Model.search_query != null)
+        {
+            @: var q = document.getElementById("query-textbox");
+            @:t = t + "search=" + q.value + "&";
+        }
+
+        @if (Model.sort_method != null)
+        {
+            @: var s = document.getElementById("Sortings");
+            @:t = t + "sort=" + s.value + "&";
+        }
+
+        @if (Model.load_number > Reported_ContentModel.load_step) 
+        {
+            @: var b = document.getElementById("Load-number").value - document.getElementById("Load-step").value;
+            @: t = t + "number=" + b + "&";
+        }
+
+        window.location.href = t + "report_id=" + e.id + "&report_action=Decline";
+    }
+
+    function showAll() {
+        goToTop();
+        window.location.href = "/Admin/Potentially-Inappropriate-Content";
+    }
+
+    function myChooseOption(e) {
+        var t = "/Admin/Potentially-Inappropriate-Content?";
+        @if (Model.search_query != null)
+        {
+            @: var q = document.getElementById("query-textbox");
+            @:t = t + "search=" + q.value + "&";
+        }
+
+        window.location.href = t + "sort=" + e.value;
+        goToTop();
+    }
+
+    function querySearch() {
+        var t = "/Admin/Potentially-Inappropriate-Content?";
+
+        var e = document.getElementById("query-textbox");
+        t = t + "search=" + e.value + "&";
+
+        @if (Model.sort_method != null)
+        {
+            @: var s = document.getElementById("Sortings");
+            @:t = t + "sort=" + s.value;
+        }
+
+        window.location.href = t;
+        goToTop();
+    }
+
+    function showMore() {
+        var t = "/Admin/Potentially-Inappropriate-Content?";
+
+        @if (Model.search_query != null)
+        {
+            @: var q = document.getElementById("query-textbox");
+            @:t = t + "search=" + q.value + "&";
+        }
+
+        @if (Model.sort_method != null)
+        {
+            @: var s = document.getElementById("Sortings");
+            @:t = t + "sort=" + s.value + "&";
+        }
+
+        window.location.href = t + "number=" + document.getElementById("Load-number").value;
+    }
+
+    const scrollableDiv = document.getElementById('scrollable-div');
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+
+        // Save scroll position before page unload
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('adminInappropriateContentScrollPosition', scrollableDiv.scrollTop);
+        });
+
+
+        //Restore scroll position on page load
+        const savedScrollPosition = localStorage.getItem('adminInappropriateContentScrollPosition');
+        if (savedScrollPosition !== null) {
+            scrollableDiv.scrollTop = savedScrollPosition;
+        }
+    });
+
+    function goToTop() {
+        scrollableDiv.scrollTop = 0;
+        localStorage.setItem('adminInappropriateContentScrollPosition', 0);
+    }
+
+    function startFunc() {
+        var t = document.referrer.split('/')[4];
+        var r = window.location.href.split('/')[4];
+        if (t.includes('?')) {
+            t = t.split('?')[0];
+        }
+        if (r.includes('?')) {
+            r = r.split('?')[0];
+        }
+
+        if (t !== r && (t === "Home" || t === "Profile" || t === "Forum" || t === "Introduction" || t === "Analytics-And-Statistics" || t === "Potentially-Inappropriate-Content" || t === "Questions-From-Users" || t === "Reported-Content" || t === "Reviews-And-Feedback")) {
+            document.querySelector(".sidebar").style.left = "0px";
+            goToTop();
+        }
+
+        if (t === "Home" && r !== "Home") {
+            var e = document.getElementById("logo");
+            e.classList.add("main-logo");
+            e.classList.remove("side-logo");
+        }
+    }
+    startFunc();
+</script>

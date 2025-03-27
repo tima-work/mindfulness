@@ -1,0 +1,37 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.Interview_PageModel
+@{
+    ViewData["Title"] = "Interview";
+    Layout = "~/Pages/Shared/_EmptyLayout.cshtml";
+}
+
+<a class="back-button" href="/News-And-Interviews">← Back</a>
+
+@if (Model.interview != null)
+{
+    <div class="tab-label" style="color: white;">@Model.interview.Title</div>
+
+    <div class="class-page-flex">
+        <div class="publications-container" style="row-gap: 50px;">
+            <div class="class-page-title-label" style="color: white;">Content</div>
+            <div class="class-page-content-label" style="color: white;">@Model.interview.Text</div>
+        </div>
+    </div>
+
+    <div class="created-by-label" style="color: white;">
+        Created by
+        @if (!Model.interview.Creator.Banned)
+        {
+            <span class="created-by-user-label">@@@Model.interview.Creator.Username</span>
+        }
+        else
+        {
+            <span class="created-by-user-label">CommonData.userBanned</span>
+        }
+        on @Model.interview.CreationDate.ToString("dd/MM/yyyy")
+    </div>
+}
+else
+{
+    <div class="tab-label">Sorry, we couldn't find this interview</div>
+}

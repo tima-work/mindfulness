@@ -1,0 +1,29 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.New_Forum_PublicationModel
+@{
+    ViewData["Title"] = "New forum publication";
+    Layout = "~/Pages/Shared/_EmptyLayout.cshtml";
+}
+
+<a class="back-button" href="/Forum">← Back</a>
+
+<div class="tab-label">New forum publication</div>
+
+<form method="post">
+    <div class="login-container" style="width: 50%; row-gap: 15px;">
+        <div class="publications-container">
+            <div class="regular-label" style="text-align: left; font-size: 25px;">Text</div>
+            <textarea asp-for="forumPublicationModel.Text" class="review-input" placeholder="Enter text of publication"></textarea>
+            <div class="login-error-label">
+                <span asp-validation-for="forumPublicationModel.Text"></span>
+            </div>
+            <div class="login-error-label">@Model.errorMessage</div>
+        </div>
+    </div>
+
+    <div class="add-new blue-button">
+        <input type="submit" asp-page-handler="NewForumPublication" value="Publish"/>
+    </div>
+</form>
+
+<partial name="_ValidationScriptsPartial" />

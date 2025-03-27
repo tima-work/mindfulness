@@ -1,0 +1,56 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.Source_PageModel
+@{
+    ViewData["Title"] = "Source";
+    Layout = "~/Pages/Shared/_NoSidebarLayout.cshtml";
+}
+
+<style>
+    body {
+        background-color: #C4FFB2;
+    }
+</style>
+
+@if (Model.source != null)
+{
+    <div class="tab-label" style="color: black;">@Model.source.Title</div>
+
+    <div class="class-page-flex">
+        <div class="publications-container" style="row-gap: 50px;">
+            <div class="class-page-title-label">Description</div>
+
+            <div class="class-page-content-label">@Model.source.Text</div>
+
+            <div class="class-page-title-label">Author</div>
+
+            <div class="class-page-content-label">@Model.source.Author</div>
+
+            <div class="class-page-title-label">Links</div>
+
+            <div class="publications-container">
+                @foreach (var link in Model.source.GetLinks())
+                {
+                    <div class="class-page-content-label">@link</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="created-by-label">
+        Created by
+        @if (!Model.source.Creator.Banned)
+        {
+            <span class="created-by-user-label">@@@Model.source.Creator.Username</span>
+        }
+        else
+        {
+            <span class="created-by-user-label">CommonData.userBanned</span>
+        }
+        on @Model.source.CreationDate.ToString("dd/MM/yyyy")
+    </div>
+}
+
+else
+{
+    <div class="tab-label" style="color: black;">Sorry, we couldn't find this source</div>
+}

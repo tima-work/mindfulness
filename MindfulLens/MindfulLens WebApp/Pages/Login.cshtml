@@ -1,0 +1,40 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.LoginModel
+@{
+    Layout = "~/Pages/Shared/_NoSidebarLayout.cshtml";
+    ViewData["Title"] = "Login";
+}
+
+<div class="tab-label">Login</div>
+<form method="post">
+    <div class="login-container">
+        <div class="login-label">Email</div>
+        <input type="text" class="login-input" id="EmailInput" name="EmailInput" placeholder="Enter" />
+        <div class="login-label">Password</div>
+        <div class="password-box">
+            <input type="password" class="login-input" id="PasswordInput" name="PasswordInput" placeholder="Enter password" />
+            <div class="show-password"><img src="~/Open eye 2.png" height="35px" id="password-eye" onclick="ShowPassword()"/></div>
+        </div>
+        @* <div class="two-divs-div" style="column-gap: 100px;">
+            <div class="remember-me">
+                <input class="remember-me-checkbox" type="checkbox" />
+                <div class="regular-label" style="text-align: left;">Remember me</div>
+            </div>
+            <a class="change-password" href="/Login-Forgot-Password-Email">Forgot password?</a>
+        </div> *@
+        <div class="login-error-label">@Model.errorMessage</div>
+        <div class="blue-button">
+            <input type="submit" value="Login" asp-page-handler="Login" />
+        </div>
+        <div class="regular-label">or</div>
+        @* <div class="login-with-google">
+            <div class="two-divs-div" style="margin: auto;">
+                <div class="google-photo">
+                    <img src="~/Google__G__logo.png" height="45px" style="margin: auto;" />
+                </div>
+                <div class="regular-label" style="color: black; margin: auto; text-align: center; cursor: pointer;">Login with google</div>
+            </div>
+        </div> *@
+        <div class="regular-label">Don't have an accout yet? <a class="register-blue-label" href="/Sign-Up">Sign up</a></div>
+    </div>
+</form>

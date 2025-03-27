@@ -1,0 +1,35 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.Admin.HomeModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Home";
+}
+
+<div class="admin-home-container">
+    <div class="admin-home-introduction">
+        Welcome to MindfulLens Admin website! Plese, login to get access to all features of this website
+    </div>
+</div>
+
+<script>
+    function startFunc() {
+        var t = document.referrer.split('/')[4];
+        var r = window.location.href.split('/')[4];
+        if (t.includes('?')) {
+            t = t.split('?')[0];
+        }
+        if (r.includes('?')) {
+            r = r.split('?')[0];
+        }
+
+        if (t === "Profile" || t === "Forum" || t === "Introduction" || t === "Analytics-And-Statistics" || t === "Potentially-Inappropriate-Content" || t === "Questions-From-Users" || t === "Reported-Content" || t === "Reviews-And-Feedback") {
+            document.querySelector(".sidebar").style.left = "0px";
+        }
+        else {
+            var e = document.getElementById('logo');
+            e.classList.add("main-logo");
+            e.classList.remove("side-logo");
+        }
+    }
+    startFunc();
+</script>

@@ -1,0 +1,46 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.Bias_PageModel
+@{
+    ViewData["Title"] = "Bias";
+    Layout = "~/Pages/Shared/_NoSidebarLayout.cshtml";
+}
+
+<style>
+    body {
+        background-color: #F4EF88;
+    }
+</style>
+
+
+
+@if (Model.bias != null)
+{
+    <div class="tab-label" style="color: black;">@Model.bias.Title</div>
+
+    <div class="class-page-flex">
+        <div class="publications-container" style="row-gap: 50px;">
+            <div class="class-page-title-label">Description</div>
+            <div class="class-page-content-label">@Model.bias.Text</div>
+            <div class="class-page-title-label">How to overcome</div>
+            <div class="class-page-content-label">@Model.bias.WayOfHandling</div>
+        </div>
+    </div>
+
+    <div class="created-by-label">
+        Created by
+        @if (!Model.bias.Creator.Banned)
+        {
+            <span class="created-by-user-label">@@@Model.bias.Creator.Username</span>
+        }
+        else
+        {
+            <span class="created-by-user-label">CommonData.userBanned</span>
+        }
+        on @Model.bias.CreationDate.ToString("dd/MM/yyyy")
+    </div>
+}
+
+else
+{
+    <div class="tab-label" style="color: black;">Sorry, we couldn't find this bias</div>
+}

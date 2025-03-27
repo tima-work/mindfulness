@@ -1,0 +1,165 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.ExercisesModel
+@{
+    ViewData["Title"] = "Exercises";
+}
+
+<div class="tab-label">Exercises</div>
+<div class="content-controls-container">
+    <div class="two-divs-div">
+        <input id="query-textbox" type="text" class="custom-input" placeholder="Search" style="margin: auto; width: 210px; height: 40px; font-size: 20px;" value="@Model.search_query" />
+        <div class="search-button" onclick="querySearch()"><img src="~/Group 2.png" width="100%" draggable="false" style="pointer-events: none; user-select: none;"></div>
+    </div>
+    <div class="blue-button" style="font-size: 20px;" onclick="showAll()">Show all</div>
+    <div class="two-divs-div">
+        <div class="profile-credentials" style="margin: auto;">Sort by: </div>
+        <select name="Sortings" id="Sortings" class="custom-combobox sort-combobox" onchange="myChooseOption(this)">
+            @if (Model.sort_method == null || (Model.sort_method != "Title" && Model.sort_method != "CreatorID") || (Model.sort_order != "ASC" && Model.sort_order != "DESC"))
+            {
+                <option value="Choose option" disabled selected>Choose option</option>
+            }
+            else
+            {
+                <option value="Choose option" disabled>Choose option</option>
+            }
+            @if (Model.sort_method == "Title" && Model.sort_order == "ASC")
+            {
+                <option value="alphabet&order=asc" selected>Alphabet ascending</option>
+            }
+            else
+            {
+                <option value="alphabet&order=asc">Alphabet ascending</option>
+            }
+            @if (Model.sort_method == "Title" && Model.sort_order == "DESC")
+            {
+                <option value="alphabet&order=desc" selected>Alphabet descending</option>
+            }
+            else
+            {
+                <option value="alphabet&order=desc">Alphabet descending</option>
+            }
+            @if (Model.sort_method == "CreationDate" && Model.sort_order == "ASC")
+            {
+                <option value="time&order=asc" selected>Time added ascending</option>
+            }
+            else
+            {
+                <option value="time&order=asc">Time added ascending</option>
+            }
+            @if (Model.sort_method == "CreationDate" && Model.sort_order == "DESC")
+            {
+                <option value="time&order=desc" selected>Time added descending</option>
+            }
+            else
+            {
+                <option value="time&order=desc">Time added descending</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div class="content-flex" id="scrollable-div">
+    <div class="content-container">
+        @foreach (var exercise in Model.exercises)
+        {
+            <a class="content-div exercise-div" href="/Exercise-Page?exercise_id=@exercise.ID">@exercise.Title</a>
+        }
+
+        <div style="grid-column-start: 1; grid-column-end: 4; background-color: transparent; height: 5px;"></div>
+
+        @if (Model.showMoreButton)
+        {
+            <div class="blue-button" style="grid-column-start: 1; grid-column-end: 4;" onclick="showMore()">Load more</div>
+            <div style="height: 100px; grid-column-start: 1; grid-column-end: 4;"></div>
+        }
+    </div>
+</div>
+
+@*<input type="text" id="Load-way" class="hidden-input" value="@Model.load_way" />*@
+<input type="text" id="Load-number" class="hidden-input" value="@Model.load_number" readonly />
+
+<script>
+    function showAll() {
+        goToTop();
+        window.location.href = "/Exercise";
+    }
+
+    function myChooseOption(e) {
+        var r = "/Exercises?";
+        @if (Model.search_query != null)
+        {
+            @: var t = document.getElementById("query-textbox");
+            @: r = r + "search=" + t.value + "&";
+        }
+        window.location.href = r + "sort=" + e.value;
+    }
+
+    function querySearch() {
+        var e = document.getElementById("query-textbox");
+        var r = "/Exercises?";
+        @if (Model.sort_method != null)
+        {
+            @: var t = document.getElementById("Sortings");
+            @: r = r + "sort=" + t.value + "&";
+        }
+        window.location.href = r + "search=" + e.value;
+    }
+
+    function showMore() {
+        var r = "/Exercises?";
+        @if (Model.search_query != null)
+        {
+            @: var e = document.getElementById("query-textbox");
+            @:r = r + "search=" + e.value + "&";
+        }
+        @if (Model.sort_method != null)
+        {
+            @: var t = document.getElementById("Sortings");
+            @:r = r + "sort=" + t.value + "&";
+        }
+        window.location.href = r + "number=" + document.getElementById("Load-number").value;
+    }
+
+    const scrollableDiv = document.getElementById('scrollable-div');
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+
+        // Save scroll position before page unload
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('userExercisesScrollPosition', scrollableDiv.scrollTop);
+        });
+
+
+        //Restore scroll position on page load
+        const savedScrollPosition = localStorage.getItem('userExercisesScrollPosition');
+        if (savedScrollPosition !== null) {
+            scrollableDiv.scrollTop = savedScrollPosition;
+        }
+    });
+
+    function goToTop() {
+        scrollableDiv.scrollTop = 0;
+        localStorage.setItem('userExercisesScrollPosition', 0);
+    }
+
+    function startFunc() {
+        var t = document.referrer.split('/')[3];
+        var r = window.location.href.split('/')[3];
+        if (t.includes('?')) {
+            t = t.split('?')[0];
+        }
+        if (r.includes('?')) {
+            r = r.split('?')[0];
+        }
+        if (r !== t && t !== "Exercise-Page") {
+            document.querySelector(".sidebar").style.left = "0px";
+            goToTop();
+        }
+        if (t === "Home") {
+            var e = document.getElementById("logo");
+            e.classList.add("main-logo");
+            e.classList.remove("side-logo");
+        }
+    }
+    startFunc();
+</script>

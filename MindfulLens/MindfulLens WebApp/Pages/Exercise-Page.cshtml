@@ -1,0 +1,42 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.Exercise_PageModel
+@{
+    ViewData["Title"] = "Exercise";
+    Layout = "~/Pages/Shared/_NoSidebarLayout.cshtml";
+}
+
+<style>
+    body {
+        background-color: #F1AFFD;
+    }
+</style>
+
+@if (Model.exercise != null)
+{
+    <div class="tab-label" style="color: black;">@Model.exercise.Title</div>
+
+    <div class="class-page-flex">
+        <div class="publications-container" style="row-gap: 50px;">
+            <div class="class-page-title-label">Description</div>
+            <div class="class-page-content-label">@Model.exercise.Text</div>
+        </div>
+    </div>
+
+    <div class="created-by-label">
+        Created by
+        @if (!Model.exercise.Creator.Banned)
+        {
+            <span class="created-by-user-label">@@@Model.exercise.Creator.Username</span>
+        }
+        else
+        {
+            <span class="created-by-user-label">CommonData.userBanned</span>
+        }
+        on @Model.exercise.CreationDate.ToString("dd/MM/yyyy")
+    </div>
+}
+
+else
+{
+    <div class="tab-label" style="color: black;">Sorry, we couldn't find this exercise</div>
+}

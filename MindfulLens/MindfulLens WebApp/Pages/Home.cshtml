@@ -1,0 +1,38 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.HomeModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="home-intro-container">
+    <div class="home-introduction">Welcome to MindfulLens!Our goal is to help you become more rational and teach you to spot cognitive biases</div>
+    @if (Model.showButtons)
+    {
+        <a class="blue-button" href="/Sign-Up">Sign up</a>
+        <a class="blue-button" href="/Login">Login</a>
+    }
+</div>
+
+<script>
+    function startFunc() {
+        if (!document.referrer) {
+            var e = document.getElementById('logo');
+            e.classList.add("main-logo");
+            e.classList.remove("side-logo");
+        }
+        else {
+            var t = document.referrer.split('/')[3];
+            var r = window.location.href.split('/')[3];
+            if (t.includes('?')) {
+                t = t.split('?')[0];
+            }
+            if (r.includes('?')) {
+                r = r.split('?')[0];
+            }
+            if (r !== t && t !== "Login" && t !== "Sign-Up" && t != "Index" && t !== "Log-Out") {
+                document.querySelector(".sidebar").style.left = "0px";
+            }
+        }
+    }
+    startFunc();
+</script>

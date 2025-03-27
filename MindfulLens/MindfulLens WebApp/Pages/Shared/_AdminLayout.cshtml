@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MindfulLens</title>
+    <!--<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />-->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!--<link rel="stylesheet" href="~/MindfulLens_WebApp.styles.css" asp-append-version="true" />-->
+</head>
+<body>
+        <!-- Background color of body -->
+        <!-- The sidebar -->
+        <div class="sidebar">
+            <div class="menu-text"><div>Menu</div></div> <!-- Menu text -->
+            <a href="/Admin/Home" class="active" onclick="SelectNavItem(this)" id="Home">Home</a>
+            <a href="/Admin/Profile" id="Profile">Profile</a>
+            <!--<a href="/Admin/Analytics-And-Statistics" onclick="SelectNavItem(this)" id="Analytics and statistics">Analytics and statistics</a>-->
+            <!--<a href="/Admin/Users" onclick="SelectNavItem(this)" id="Users">Users</a>-->
+            <a href="/Admin/Forum" onclick="SelectNavItem(this)" id="Forum">Forum</a>
+            <a href="/Admin/Reviews-And-Feedback" onclick="SelectNavItem(this)" id="Reviews">Reviews</a>
+            <a href="/Admin/Reported-Content" onclick="SelectNavItem(this)" id="Reported content">Reported content</a>
+            <a href="/Admin/Potentially-Inappropriate-Content" onclick="SelectNavItem(this)" id="Potentially inappropriate content">Potentially inappropriate content</a>
+            <a href="/Admin/Introduction" id="Introduction">Introduction</a>
+            <!--<a href="/Admin/Questions-From-Users" onclick="SelectNavItem(this)" id="Questions from users">Questions from users</a>-->
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+            <a href="/Log-Out" id="Log out" class="logout-btn">Log out</a>
+        </div>
+
+        <!-- Use any element to open the sidebar -->
+        <div class="topnav">
+            <span class="toggle-btn" onclick="openNav()">&#9776;</span> <!-- Toggle button with 3 horizontal lines -->
+        </div>
+
+        <div class="side-logo" id="logo">
+            <img src="~/Group 1.png" width="80%" draggable="false" style="pointer-events: none; user-select: none;">
+        </div>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <!--<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+    <script>
+        function openNav() {
+            document.querySelector(".sidebar").style.left = "0px";
+        }
+
+        function closeNav() {
+            document.querySelector(".sidebar").style.left = "-250px";
+        }
+
+        function highlightActiveLink() {
+            var currentUrl = window.location.pathname;
+            var sidebarLinks = document.querySelectorAll('.sidebar a');
+
+            sidebarLinks.forEach(function (link) {
+                if (link.getAttribute('href') === currentUrl) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            setTimeout(function () {
+                closeNav();
+            }, 75);
+        }
+
+        // Highlight active link when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            highlightActiveLink();
+            setTimeout(function () {
+                toggleLogoPosition();
+            }, 75)
+        });
+
+        // Update active link on navigation
+        window.addEventListener('popstate', function () {
+            highlightActiveLink();
+            setTimeout(function () {
+                toggleLogoPosition();
+            }, 75)
+        });
+
+
+
+        function toggleLogoPosition() {
+            var homeLink = document.getElementById('Home');
+            var logo = document.getElementById('logo');
+
+            if (homeLink.classList.contains('active')) {
+                // If Home link is active, move logo to center
+                logo.classList.add("main-logo");
+                logo.classList.remove("side-logo");
+            } else {
+                // If other link is active, move logo to corner
+                logo.classList.add("side-logo");
+                logo.classList.remove("main-logo");
+            }
+        }
+
+        document.onclick = function (e) {
+            let sidebar = document.querySelector(".sidebar");
+            let toggle_btn = document.querySelector(".toggle-btn");
+            if (!sidebar.contains(e.target) && !toggle_btn.contains(e.target)) {
+                closeNav();
+            }
+        }
+
+        function getTaskbarHeight() {
+            return window.outerHeight - window.innerHeight;
+        }
+
+        // Adjust the sidebar position to avoid being covered by the taskbar
+        function adjustSidebarPosition() {
+            const logout = document.getElementById('Log out');
+            const taskbarHeight = getTaskbarHeight();
+            logout.style.bottom = taskbarHeight + 'px';
+        }
+
+        function checkForOpenedSidebar(t, r) {
+            window.alert("Aboba");
+            if (t !== r && (t === "Home" || t === "Profile" || t === "Forum" || t === "Introduction" || t === "Analytics-And-Statistics" || t === "Potentially-Inappropriate-Content" || t === "Questions-From-Users" || t === "Reported-Content" || t === "Reviews-And-Feedback")) {
+                document.querySelector(".sidebar").style.left = "0px";
+            }
+            // if (t === "Home" && r !== "Home") {
+            //     var e = document.getElementById("logo");
+            //     e.classList.add("main-logo");
+            //     e.classList.remove("side-logo");
+            // }
+            window.alert("Aboba");
+        }
+
+        // Call the adjustSidebarPosition function when the window is resized
+        window.addEventListener('resize', adjustSidebarPosition);
+
+        // Adjust the sidebar position initially
+        adjustSidebarPosition();
+
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

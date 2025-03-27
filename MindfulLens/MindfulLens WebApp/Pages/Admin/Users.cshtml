@@ -1,0 +1,74 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.Admin.UsersModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Users";
+}
+
+<div class="tab-label">Users</div>
+<div class="content-controls-container">
+    <div class="two-divs-div" style="grid-template-columns: calc(80% - 20px) 20%;">
+        <input type="text" class="custom-input" placeholder="Search" style="margin: auto; width: 210px; height: 40px; font-size: 20px;" />
+        <div class="search-button"><img src="~/Group 2.png" width="100%" /></div>
+    </div>
+    <div class="blue-button" style="font-size: 20px;">Show all</div>
+    <div class="two-divs-div">
+        <div class="profile-credentials" style="margin: auto;">Filter by: </div>
+        <select name="Filters" id="Filters" class="custom-combobox">
+            <option value="Banned">Banned</option>
+            <option value="Not banned">Not banned</option>
+            <option value="Reported">Reported</option>
+        </select>
+    </div>
+</div>
+<div class="publications-flex" style="width: 45%;">
+    <div class="publications-container">
+
+
+        <div class="publication-div" style="grid-template-columns: 10% calc(60% - 20px) 30%;">
+            <div class="author-photo" style="width: 80%; margin-bottom: auto;"></div>
+            <div class="user-credentials-container">
+                <div class="user-credentials">Name: Name</div>
+                <div class="user-credentials">Username: Username</div>
+                <div class="user-credentials">Email: Email</div>
+            </div>
+            <div class="blue-button" style="font-size: 20px;">View profile</div>
+        </div>
+        <div class="white-line"></div>
+
+
+        <div class="publication-div" style="grid-template-columns: 10% calc(60% - 20px) 30%;">
+            <div class="author-photo" style="width: 80%; margin-bottom: auto;"></div>
+            <div class="user-credentials-container">
+                <div class="user-credentials">Name: Name</div>
+                <div class="user-credentials">Username: Username</div>
+                <div class="user-credentials">Email: Email</div>
+            </div>
+            <div class="blue-button" style="font-size: 20px;">View profile</div>
+        </div>
+        <div class="white-line"></div>
+
+
+        <div class="publication-div" style="grid-template-columns: 10% calc(60% - 20px) 30%;">
+            <div class="author-photo" style="width: 80%; margin-bottom: auto;"></div>
+            <div class="user-credentials-container">
+                <div class="user-credentials">Name: Name</div>
+                <div class="user-credentials">Username: Username</div>
+                <div class="user-credentials">Email: Email</div>
+            </div>
+            <div class="blue-button" style="font-size: 20px;">View profile</div>
+        </div>
+        <div class="white-line"></div>
+
+
+        <div class="publication-div" style="grid-template-columns: 10% calc(60% - 20px) 30%;">
+            <div class="author-photo" style="width: 80%; margin-bottom: auto;"></div>
+            <div class="user-credentials-container">
+                <div class="user-credentials">Name: Name</div>
+                <div class="user-credentials">Username: Username</div>
+                <div class="user-credentials">Email: Email</div>
+            </div>
+            <div class="blue-button" style="font-size: 20px;">View profile</div>
+        </div>
+    </div>
+</div>

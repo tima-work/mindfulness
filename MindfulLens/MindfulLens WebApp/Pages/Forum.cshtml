@@ -1,0 +1,457 @@
+﻿@page
+@using Logic_Layer
+@model MindfulLens_WebApp.Pages.ForumModel
+@{
+    ViewData["Title"] = "Forum";
+}
+
+
+<div class="tab-label">Forum</div>
+<div class="content-controls-container">
+    <div class="two-divs-div">
+        <input id="query-textbox" type="text" class="custom-input" placeholder="Search" style="margin: auto; width: 210px; height: 40px; font-size: 20px;" value="@Model.search_query" />
+        <div class="search-button" onclick="querySearch()"><img src="~/Group 2.png" width="100%" draggable="false" style="pointer-events: none; user-select: none;"></div>
+    </div>
+    <div class="blue-button" style="font-size: 20px;" onclick="showAll()">Show all</div>
+    @if (HttpContext.User.HasClaim(c => c.Type == "id"))
+    {
+        <div class="two-divs-div">
+            <div class="profile-credentials" style="margin: auto;">Get recommendations by: </div>
+            <select name="Sortings" id="Sortings" class="custom-combobox sort-combobox" onchange="myChooseOption(this)">
+                @if (Model.recommendations_method == null || (Model.recommendations_method != "keywords" && Model.recommendations_method != "users"))
+                {
+                    <option value="Choose option" disabled selected>Choose option</option>
+                }
+                else
+                {
+                    <option value="Choose option" disabled>Choose option</option>
+                }
+                @if (Model.recommendations_method == "keywords")
+                {
+                    <option value="keywords" selected>Keywords</option>
+                }
+                else
+                {
+                    <option value="keywords">Keywords</option>
+                }
+                @if (Model.recommendations_method == "users")
+                {
+                    <option value="users" selected>Users</option>
+                }
+                else
+                {
+                    <option value="users">Users</option>
+                }
+            </select>
+        </div>
+        @* <div class="blue-button" style="font-size: 20px; width: 250px;">Get recommended publications</div> *@
+
+    }
+</div>
+<div class="publications-flex" id="scrollable-div">
+    <div class="publications-container">
+
+        @if (Model.forumPublications.Length > 0)
+        {
+            for (int i = 0; i < Model.forumPublications.Length - 1; i++)
+            {
+                <div class="three-dot-publication-div">
+                    <div class="author-div">
+                        @if (!Model.forumPublications[i].forumPublication.Creator.Banned)
+                        {
+                            <div class="author-photo">
+                                @if (Model.forumPublications[i].forumPublication.Creator.Photo != null)
+                                {
+                                    string imageBase64 = Convert.ToBase64String(Model.forumPublications[i].forumPublication.Creator.Photo);
+                                    string imageSrc = $"data:image/png;base64,{imageBase64}";
+                                    <img src="@imageSrc" draggable="false" style="pointer-events: none; user-select: none; width: 100%;" />
+                                }
+                            </div>
+                            <div class="author-name">@Model.forumPublications[i].forumPublication.Creator.Name</div>
+                        }
+                        else
+                        {
+                            <div class="author-photo"></div>
+                            <div class="author-name">@CommonData.userBanned</div>
+                        }
+                    </div>
+
+                    @if (!Model.forumPublications[i].forumPublication.IsDeleted)
+                    {
+                        <div class="publication-text">@Model.forumPublications[i].forumPublication.Text</div>
+                        <form method="post">
+                            <input class="hidden-input" name="branch-id" value="@Model.forumPublications[i].forumPublication.ID" type="text" readonly />
+                            <input class="view-replies" type="submit" asp-page-handler="ViewReplies" value="View @Model.forumPublications[i].reply_number replies" />
+                        </form>
+
+                        <div class="three-dot-grid">
+                            <div class="regular-label" onclick="openThreeDotMenu(this)" style="font-size: 30px; text-align: center; cursor: pointer;" id="@Model.forumPublications[i].forumPublication.ID">&#10247</div>
+                            <div class="three-dot-none three-dot-menu-start" id="threeDotMenu-@Model.forumPublications[i].forumPublication.ID">
+                                <div class="three-dot-menu">
+                                    <a class="three-dot-button" href="/New-Report?publication_id=@Model.forumPublications[i].forumPublication.ID&publication_type=ForumPublication">Report</a>
+                                    <a class="three-dot-button" href="/New-Reply?question_id=@Model.forumPublications[i].forumPublication.ID">Reply</a>
+                                    @if (HttpContext.User.HasClaim(c => c.Type == "id") && HttpContext.User.FindFirst("id").Value == Model.forumPublications[i].forumPublication.Creator.Id.ToString())
+                                    {
+                                        <a class="three-dot-button" href="/Edit-Forum-Publication?publication_id=@Model.forumPublications[i].forumPublication.ID">Edit</a>
+                                        <div class="three-dot-button" id="Delete-@Model.forumPublications[i].forumPublication.ID" onclick="deletePublication(this);">Delete</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="publication-text">@CommonData.publicationDeleted</div>
+                        <a class="view-replies" href="/Forum-Branch?publication_id=@Model.forumPublications[i].forumPublication.ID">View @Model.forumPublications[i].reply_number replies</a>
+                        <div></div>
+                    }
+                </div>
+
+                <div class="white-line"></div>
+            }
+
+            <div class="three-dot-publication-div">
+                <div class="author-div">
+                    @if (!Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.Creator.Banned)
+                    {
+                        <div class="author-photo">
+                            @if (Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.Creator.Photo != null)
+                            {
+                                string imageBase64 = Convert.ToBase64String(Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.Creator.Photo);
+                                string imageSrc = $"data:image/png;base64,{imageBase64}";
+                                <img src="@imageSrc" draggable="false" style="pointer-events: none; user-select: none; width: 100%;" />
+                            }
+                        </div>
+                        <div class="author-name">@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.Creator.Name</div>
+                    }
+                    else
+                    {
+                        <div class="author-photo"></div>
+                        <div class="author-name">@CommonData.userBanned</div>
+                    }
+                </div>
+                <div class="publication-text">@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.Text</div>
+                <form method="post">
+                    <input class="hidden-input" name="branch-id" value="@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.ID" type="text" readonly />
+                    <input class="view-replies" type="submit" asp-page-handler="ViewReplies" value="View @Model.forumPublications[Model.forumPublications.Length - 1].reply_number replies" />
+                </form>
+                
+                <div class="three-dot-grid">
+                    <div class="regular-label" onclick="openThreeDotMenu(this)" style="font-size: 30px; text-align: center; cursor: pointer;" id="@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.ID">&#10247</div>
+                    <div class="three-dot-none three-dot-menu-start" id="threeDotMenu-@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.ID">
+                        <div class="three-dot-menu">
+                            <a class="three-dot-button" href="/New-Report?publication_id=@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.ID&publication_type=ForumPublication">Report</a>
+                            <a class="three-dot-button" href="/New-Reply?question_id=@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.ID">Reply</a>
+                            @if (HttpContext.User.HasClaim(c => c.Type == "id") && HttpContext.User.FindFirst("id").Value == Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.Creator.Id.ToString())
+                            {
+                                <a class="three-dot-button" href="/Edit-Forum-Publication?publication_id=@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.ID">Edit</a>
+                                <div class="three-dot-button" id="Delete-@Model.forumPublications[Model.forumPublications.Length - 1].forumPublication.ID" onclick="deletePublication(this);">Delete</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* @foreach (var item in Model.forumPublications)
+        {
+            <div class="three-dot-publication-div">
+                <div class="author-div">
+                    <div class="author-photo"></div>
+                    <div class="author-name">@item.Key.Creator.Name</div>
+                </div>
+                <div class="publication-text">@item.Key.Text</div>
+                <a class="view-replies" href="/Forum-Branch?publication_id=@item.Key.ID">View @item.Value replies</a>
+
+                <div class="three-dot-grid">
+                    <div class="regular-label" onclick="openThreeDotMenu(this)" style="font-size: 30px; text-align: center; cursor: pointer;" id="@item.Key.ID">&#10247</div>
+                    <div class="three-dot-none three-dot-menu-start" id="threeDotMenu-@item.Key.ID">
+                        <div class="three-dot-menu">
+                            <a class="three-dot-button" href="/New-Report?publication_id=@item.Key.ID&publication_type=ForumPublication">Report</a>
+                            <a class="three-dot-button" href="New-Reply?question_id=@item.Key.ID">Reply</a>
+                            @if (HttpContext.User.HasClaim(c => c.Type == "id") && HttpContext.User.FindFirst("id").Value == item.Key.Creator.Id.ToString())
+                            {
+                                <a class="three-dot-button" href="/Edit-Forum-Publication?publication_id=@item.Key.ID">Edit</a>
+                                <a class="three-dot-button">Delete</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            if (item.Key != Model.forumPublications.Last().Key)
+            {
+                <div class="white-line"></div>
+            }
+        } *@
+
+        @if (Model.showMoreButton)
+        {
+            <div class="blue-button" onclick="showMore()">Load more</div>
+            <div style="height: 100px;"></div>
+        }
+
+
+
+        @*<div class="three-dot-publication-div">
+            <div class="author-div">
+                <div class="author-photo"></div>
+                <div class="author-name">Tom Scott</div>
+            </div>
+            <div class="publication-text">Do you know any good examples of survivor bias?</div>
+            <a class="view-replies" href="/Forum-Branch">View 54 replies</a>
+            <!--<a class="regular-label" onclick="showDropdown()">&#10247</a>-->
+            <div class="dropdown">
+                <!-- three dots-->
+                <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <!-- menu-->
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="#home">Reply</a>
+                    <a href="#home">Report</a>
+                    <a href="#about">Edit</a>
+                    <a href="#home">Delete</a>
+                </div>
+            </div>
+            <select class="three-dots-combobox" onfocus="this.size=4;" onblur="this.size=0;" onchange="this.size=1; this.blur()">
+                <option selected style="color: white; text-align: center;" value="0">&#10247</option>
+                <form method="post">
+                    <input class="three-dot-option" type="submit" value="Reply" asp-page-handler="Submit" />
+                </form>
+                <option class="three-dot-option">Reply</option>
+                <option class="option-spacing" disabled>-</option>
+                <option class="three-dot-option">Report</option>
+                <option class="option-spacing" disabled>-</option>
+                <option class="three-dot-option">Edit</option>
+                <option class="option-spacing" disabled>-</option>
+                <option class="three-dot-option">Delete</option>
+            </select>
+            <form method="post">
+                <input type="submit" value="Submit" asp-page-handler="Submit" />
+            </form>
+            <form method="post">
+                <input type="submit" value="Aboba" asp-page-handler="Abchicha" />
+            </form>
+            <div class="three-dot-grid">
+                <div class="regular-label" onclick="myFunction()" style="font-size: 30px; text-align: center; cursor: pointer;">&#10247</div>
+                <div class="three-dot-none" id="myDIV">
+                    <div class="three-dot-menu">
+                        <form method="post">
+                            <input type="submit" class="three-dot-button" value="Reply" asp-page-handler="Submit"/>
+                        </form>
+                        <input type="submit" class="three-dot-button" value="Report" />
+                        <input type="submit" class="three-dot-button" value="Edit" />
+                        <input type="submit" class="three-dot-button" value="Delete" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="white-line"></div>
+
+
+        <div class="three-dot-publication-div">
+            <div class="author-div">
+                <div class="author-photo"></div>
+                <div class="author-name">John Doe</div>
+            </div>
+            <div class="publication-text">Any problems similar to Monty Hall problem?</div>
+            <div class="view-replies">View 123 replies</div>
+            <div class="dropdown">
+                <!-- three dots-->
+                <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <!-- menu-->
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="#home">Reply</a>
+                    <a href="#home">Report</a>
+                    <a href="#about">Edit</a>
+                    <a href="#home">Delete</a>
+                </div>
+            </div>
+        </div>
+        <div class="white-line"></div>
+
+
+        <div class="three-dot-publication-div">
+            <div class="author-div">
+                <div class="author-photo"></div>
+                <div class="author-name">Bob Wilson</div>
+            </div>
+            <div class="publication-text">What do you think of the last interview published here?</div>
+            <div class="view-replies">View 26 replies</div>
+            <div class="dropdown">
+                <!-- three dots-->
+                <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <!-- menu-->
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="#home">Reply</a>
+                    <a href="#home">Report</a>
+                    <a href="#about">Edit</a>
+                    <a href="#home">Delete</a>
+                </div>
+            </div>
+        </div>
+        <div class="white-line"></div>
+
+
+        <div class="three-dot-publication-div">
+            <div class="author-div">
+                <div class="author-photo"></div>
+                <div class="author-name">Sam Miller</div>
+            </div>
+            <div class="publication-text">Have you ever seen website where I can calculate possibility according to Bayes’ theorem?</div>
+            <div class="view-replies">View 79 replies</div>
+            <div class="dropdown">
+                <!-- three dots-->
+                <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <!-- menu-->
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="#home">Reply</a>
+                    <a href="#home">Report</a>
+                    <a href="#about">Edit</a>
+                    <a href="#home">Delete</a>
+                </div>
+            </div>
+        </div>*@
+    </div>
+</div>
+
+@* <input type="text" id="Load-way" class="hidden-input" value="@Model.load_way" /> *@
+<input type="text" id="Load-number" class="hidden-input" value="@Model.load_number" readonly />
+<input type="text" id="Load-step" class="hidden-input" value="@ForumModel.load_step" readonly />
+
+<a class="add-new blue-button" href="/New-Forum-Publication">Add new</a>
+
+
+<script>
+    function deletePublication(e) {
+        let a = "Are you sure you want to delete this publication?";
+        if (confirm(a) == true) {
+            var t = "/Forum?";
+
+            @if (Model.search_query != null)
+            {
+                @: var q = document.getElementById("query-textbox");
+                @: t = t + "search=" + q.value + "&";
+            }
+
+            @if (Model.load_number > ForumModel.load_step)
+            {
+                @: var b = document.getElementById("Load-number").value - document.getElementById("Load-step").value;
+                @: t = t + "number=" + b + "&";
+            }
+
+            window.location.href = t + "publication_id=" + e.id.split("-")[1];
+        }
+    }
+
+    function showAll() {
+        goToTop();
+        window.location.href = "/Forum";
+    }
+
+    function querySearch() {
+        var e = document.getElementById("query-textbox");
+        window.location.href = "/Forum?search=" + e.value;
+        goToTop();
+    }
+
+    function showMore() {
+        var n = document.getElementById("Load-number");
+        var s = document.getElementById("query-textbox");
+        var e = document.getElementById("Sortings");
+
+        var t = "/Forum?";
+
+
+        @if (Model.recommendations_method != null)
+        {
+            @: t = t + "recommendations=" + e.value + "&";
+        }
+        else if (Model.search_query != null)
+        {
+            @: t = t + "search=" + s.value + "&";
+        }
+
+        window.location.href = t + "number=" + n.value;
+
+
+    }
+
+    function myChooseOption(e) {
+        window.location.href = "/Forum?recommendations=" + e.value;
+    }
+
+    function openThreeDotMenu(e) {
+        var x = document.getElementById("threeDotMenu-" + e.id);
+        var elements = document.getElementsByClassName("three-dot-none");
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i] != x) {
+                elements[i].style.display = "none";
+            }
+        }
+        if (x.style.display === "none" || x.classList.contains("three-dot-menu-start")) {
+            x.style.display = "block";
+            x.classList.remove("three-dot-menu-start");
+        } else {
+            x.style.display = "none";
+        }
+    }
+
+    const scrollableDiv = document.getElementById('scrollable-div');
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+
+        // Save scroll position before page unload
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('userForumScrollPosition', scrollableDiv.scrollTop);
+        });
+
+
+        //Restore scroll position on page load
+        const savedScrollPosition = localStorage.getItem('userForumScrollPosition');
+        if (savedScrollPosition !== null) {
+            scrollableDiv.scrollTop = savedScrollPosition;
+        }
+    });
+
+    function goToTop() {
+        scrollableDiv.scrollTop = 0;
+        localStorage.setItem('userForumScrollPosition', 0);
+    }
+
+    function startFunc() {
+        var t = document.referrer.split('/')[3];
+        var r = window.location.href.split('/')[3];
+        if (t.includes('?')) {
+            t = t.split('?')[0];
+        }
+        if (r.includes('?')) {
+            r = r.split('?')[0];
+        }
+        if (r !== t && t !== "New-Forum-Publication" && t !== "New-Reply" && t !== "New-Report" && t !== "Edit-Forum-Publication" && t !== "Forum-Branch") {
+            document.querySelector(".sidebar").style.left = "0px";
+            goToTop();
+        }
+        if (t === "Home") {
+            var e = document.getElementById("logo");
+            e.classList.add("main-logo");
+            e.classList.remove("side-logo");
+        }
+    }
+    startFunc();
+</script>

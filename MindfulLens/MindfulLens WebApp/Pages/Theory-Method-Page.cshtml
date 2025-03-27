@@ -1,0 +1,47 @@
+﻿@page
+@using Logic_Layer
+@model MindfulLens_WebApp.Pages.Theory_Method_PageModel
+@{
+    ViewData["Title"] = "Aboba";
+    Layout = "~/Pages/Shared/_NoSidebarLayout.cshtml";
+}
+
+<style>
+    body {
+        background-color: #274690;
+    }
+</style>
+
+
+@if (Model.theory != null)
+{
+    <div class="tab-label" style="color: white;">@Model.theory.Title</div>
+
+    <div class="class-page-flex">
+        <div class="publications-container" style="row-gap: 50px;">
+            <div class="class-page-title-label" style="color: white;">Description</div>
+            <div class="class-page-content-label" style="color: white;">@Model.theory.Text</div>
+            <div class="class-page-title-label" style="color: white;">How to overcome</div>
+            <div class="class-page-content-label" style="color: white;">@Model.theory.WayOfHandling</div>
+        </div>
+    </div>
+
+    <div class="created-by-label" style="color: white;">
+        Created by
+        @if (!Model.theory.Creator.Banned)
+        {
+            <span class="created-by-user-label">@@@Model.theory.Creator.Username</span>
+        }
+        else 
+        {
+            <span class="created-by-user-label">CommonData.userBanned</span>
+        }
+        on @Model.theory.CreationDate.ToString("dd/MM/yyyy")
+    </div>
+}
+
+else
+{
+    <div class="tab-label" style="color: black;">Sorry, we couldn't find this theory/method</div>
+}
+

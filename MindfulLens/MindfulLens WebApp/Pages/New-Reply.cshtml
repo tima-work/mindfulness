@@ -1,0 +1,67 @@
+﻿@page
+@using Logic_Layer
+@model MindfulLens_WebApp.Pages.New_ReplyModel
+@{
+    ViewData["Title"] = "New reply";
+    Layout = "~/Pages/Shared/_NoSidebarLayout.cshtml";
+}
+
+
+@if (Model.questionPublication == null)
+{
+    <div class="tab-label">Sorry, we couldn't find this publication</div>
+}
+else if (Model.questionPublication.IsDeleted)
+{
+    <div class="tab-label">Sorry, this publication was deleted</div>
+}
+else
+{
+    <div class="tab-label">New reply</div>
+
+    <form method="post">
+
+        <div class="login-container" style="width: 50%; row-gap: 15px;">
+            <div class="mentioned-forum-publication">
+                <div class="author-div">
+                    @if (!Model.questionPublication.Creator.Banned)
+                    {
+                        <div class="author-photo">
+                            @if (Model.questionPublication.Creator.Photo != null)
+                            {
+                                string imageBase64 = Convert.ToBase64String(Model.questionPublication.Creator.Photo);
+                                string imageSrc = $"data:image/png;base64,{imageBase64}";
+                                <img src="@imageSrc" draggable="false" style="pointer-events: none; user-select: none; width: 100%;" />
+                            }
+                        </div>
+                        <div class="author-name">@Model.questionPublication.Creator.Name</div>
+                    }
+                    else
+                    {
+                        <div class="author-photo"></div>
+                        <div class="author-name">@CommonData.userBanned</div>
+                    }
+                </div>
+                <div class="publication-text">@Model.questionPublication.Text</div>
+            </div>
+
+            <input type="text" readonly value="@Model.questionPublication.ID" class="hidden-input" name="QuestionPublicationId" />
+
+            <div class="publications-container">
+                <div class="regular-label" style="text-align: left; font-size: 25px;">Text</div>
+                <textarea asp-for="forumPublicationModel.Text" class="review-input" placeholder="Enter text of publication"></textarea>
+                <div class="login-error-label">
+                    <span asp-validation-for="forumPublicationModel.Text"></span>
+                </div>
+                <div class="login-error-label">@Model.errorMessage</div>
+            </div>
+        </div>
+
+        <div class="add-new blue-button">
+            <input type="submit" asp-page-handler="NewReply" value="Publish" />
+        </div>
+
+    </form>
+}
+
+<partial name="_ValidationScriptsPartial" />

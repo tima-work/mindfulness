@@ -1,0 +1,33 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.Your_programModel
+@{
+    ViewData["Title"] = "Your program";
+}
+
+<div class="tab-label">Your program</div>
+<div class="empty-page-div">
+    <div class="empty-page-text">To create or continue your program, you have to use our desktop application. Press button below to download it</div>
+    <div class="blue-button">Download</div>
+</div>
+
+<script>
+    function startFunc() {
+        var t = document.referrer.split('/')[3];
+        var r = window.location.href.split('/')[3];
+        if (t.includes('?')) {
+            t = t.split('?')[0];
+        }
+        if (r.includes('?')) {
+            r = r.split('?')[0];
+        }
+        if (r !== t) {
+            document.querySelector(".sidebar").style.left = "0px";
+        }
+        if (t === "Home") {
+            var e = document.getElementById("logo");
+            e.classList.add("main-logo");
+            e.classList.remove("side-logo");
+        }
+    }
+    startFunc();
+</script>

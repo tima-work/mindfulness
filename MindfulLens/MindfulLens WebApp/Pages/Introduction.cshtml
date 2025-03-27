@@ -1,0 +1,31 @@
+﻿@page
+@model MindfulLens_WebApp.Pages.IntroductionModel
+@{
+    ViewData["Title"] = "Introduction";
+}
+
+<div class="tab-label">Introduction</div>
+
+<div class="tab-label" style="top: 50%; transform: translate(-50%, -50%); font-size: 40px;">Go explore yourself</div>
+
+<script>
+    function startFunc() {
+        var t = document.referrer.split('/')[3];
+        var r = window.location.href.split('/')[3];
+        if (t.includes('?')) {
+            t = t.split('?')[0];
+        }
+        if (r.includes('?')) {
+            r = r.split('?')[0];
+        }
+        if (r !== t) {
+            document.querySelector(".sidebar").style.left = "0px";
+        }
+        if (t === "Home") {
+            var e = document.getElementById("logo");
+            e.classList.add("main-logo");
+            e.classList.remove("side-logo");
+        }
+    }
+    startFunc();
+</script>

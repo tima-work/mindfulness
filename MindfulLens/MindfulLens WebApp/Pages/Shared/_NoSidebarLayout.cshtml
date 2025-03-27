@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MindfulLens_WebApp</title>
+    <!--<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />-->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!--<link rel="stylesheet" href="~/MindfulLens_WebApp.styles.css" asp-append-version="true" />-->
+</head>
+<body>
+        <!-- Background color of body -->
+        <!-- The sidebar -->
+        @*<div class="sidebar">
+            <div class="menu-text"><div>Menu</div></div> <!-- Menu text -->
+            <a href="/Home" class="active" onclick="SelectNavItem(this)" id="Home">Home</a>
+            <a href="/Your-Program" onclick="SelectNavItem(this)" id="Your program">Your program</a>
+            <a href="/Profile" onclick="SelectNavItem(this)" id="Profile">Profile</a>
+            <a href="/Biases-Vocabulary" onclick="SelectNavItem(this)" id="Biases vocabulary">Biases vocabulary</a>
+            <a href="/Theories-And-Methods" onclick="SelectNavItem(this)" id="Helpful theories and methods">Helpful theories and methods</a>
+            <a href="/Sources" onclick="SelectNavItem(this)" id="Good sources of information">Good sources of information</a>
+            <a href="/Exercises" onclick="SelectNavItem(this)" id="Exercises">Exercises</a>
+            <a href="/Forum" onclick="SelectNavItem(this)" id="Forum">Forum</a>
+            <a href="/News-And-Interviews" onclick="SelectNavItem(this)" id="News and interviews">News and interviews</a>
+            <a href="/Reviews-And-Feedback" onclick="SelectNavItem(this)" id="Reviews and feedback">Reviews and feedback</a>
+            <a href="/Introduction" onclick="SelectNavItem(this)" id="Introduction">Introduction</a>
+            <a href="/About" onclick="SelectNavItem(this)" id="About">About</a>
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+            <a href="/Index" id="Log out" class="logout-btn">Log out</a>
+        </div>
+
+        <!-- Use any element to open the sidebar -->
+        <div class="topnav">
+            <span class="toggle-btn" onclick="openNav()">&#9776;</span> <!-- Toggle button with 3 horizontal lines -->
+        </div>*@
+
+        <div class="back-button" onclick="myGoBack()">← Back</div>
+
+        <div class="side-logo" id="logo">
+            <img src="~/Group 1.png" width="80%" draggable="false" style="pointer-events: none; user-select: none;" />
+        </div>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <!--<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+    @* <script>
+        function openNav() {
+            document.querySelector(".sidebar").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.querySelector(".sidebar").style.width = "0";
+        }
+
+        function highlightActiveLink() {
+            var currentUrl = window.location.pathname;
+            var sidebarLinks = document.querySelectorAll('.sidebar a');
+
+            sidebarLinks.forEach(function (link) {
+                if (link.getAttribute('href') === currentUrl) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            setTimeout(function () {
+                closeNav();
+            }, 75);
+        }
+
+        // Highlight active link when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            highlightActiveLink();
+            setTimeout(function () {
+                toggleLogoPosition();
+            }, 75)
+        });
+
+        // Update active link on navigation
+        window.addEventListener('popstate', function () {
+            highlightActiveLink();
+            setTimeout(function () {
+                toggleLogoPosition();
+            }, 75)
+        });
+
+
+
+        function toggleLogoPosition() {
+            var homeLink = document.getElementById('Home');
+            var logo = document.getElementById('logo');
+
+            if (homeLink.classList.contains('active')) {
+                // If Home link is active, move logo to center
+                logo.classList.add("main-logo");
+                logo.classList.remove("side-logo");
+            } else {
+                // If other link is active, move logo to corner
+                logo.classList.add("side-logo");
+                logo.classList.remove("main-logo");
+            }
+        }
+
+        document.onclick = function(e) {
+            let sidebar = document.querySelector(".sidebar");
+            let toggle_btn = document.querySelector(".toggle-btn");
+            if (!sidebar.contains(e.target) && !toggle_btn.contains(e.target)) {
+                closeNav();
+            }
+        }
+
+        function getTaskbarHeight() {
+            return window.outerHeight - window.innerHeight;
+        }
+
+        // Adjust the sidebar position to avoid being covered by the taskbar
+        function adjustSidebarPosition() {
+            const logout = document.getElementById('Log out');
+            const taskbarHeight = getTaskbarHeight();
+            logout.style.bottom = taskbarHeight + 'px';
+        }
+
+        // Call the adjustSidebarPosition function when the window is resized
+        window.addEventListener('resize', adjustSidebarPosition);
+
+        // Adjust the sidebar position initially
+        adjustSidebarPosition();
+
+    </script> *@
+    <script>
+        function ShowPassword() {
+            var i = document.getElementById("PasswordInput");
+            var e = document.getElementById("password-eye");
+
+            if (i.type == "text") {
+                i.type = "password";
+                e.src = "/Open eye 2.png";
+            }
+            else {
+                i.type = "text";
+                e.src = "/Closed eye.png";
+            }
+        }
+
+        function myGoBack() {
+            if (!document.referrer ) {
+                window.location.href = "/";
+            }
+            else {
+                var t = document.referrer.split('/')[3];
+                var r = window.location.href.split('/')[3];
+                if (t.includes('?')) {
+                    t = t.split('?')[0];
+                }
+                if (r.includes('?')) {
+                    r = r.split('?')[0];
+                }
+                if (r === t) {
+                    window.location.href = "/";
+                }
+                else {
+                    window.location.href = document.referrer;
+                }
+            }
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

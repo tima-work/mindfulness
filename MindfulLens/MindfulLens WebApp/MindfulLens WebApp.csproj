@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MindfulLens_WebApp</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Fonts\Lato-Regular.ttf" />
+    <None Include="wwwroot\Fonts\MontserratAlternates-Regular.ttf" />
+    <None Include="wwwroot\Fonts\PlayfairDisplay-VariableFont_wght.ttf" />
+    <None Include="wwwroot\Group 1.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Photos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Data Infrastructure\Data Infrastructure.csproj" />
+    <ProjectReference Include="..\Logic Layer\Logic Layer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\Shared\_NoSidebarLayout.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
